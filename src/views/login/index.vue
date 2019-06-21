@@ -58,16 +58,16 @@ export default {
             new_captcha: true,
             product: 'popup'
           },
-          function (captchaObj) {
+          (captchaObj) => {
             // console.log(captchaObj)
             // captchaObj 验证对象
             // 这里可以调用验证实例 captchaObj 的实例方法
             captchaObj.appendTo('#captchaBox') // 页面上要添加id为captchaBox的盒子，并且要设置宽高才行
             captchaObj
-              .onReady(function () {
+              .onReady(() => {
                 // your code
               })
-              .onSuccess(function () {
+              .onSuccess(() => {
                 // 验证成功了  进来 captchaObj.getValidate() 就拿到了结果，这个结果正好是后端短信验证接
                 // 口需要的数据，我们来在这里请求这个接口吧
                 // console.log(captchaObj.getValidate())
@@ -88,19 +88,19 @@ export default {
                   }
                 }).then(res => {
                   // -----------------------成功发送短信了 这时候应该给按钮设置倒计时，倒计时未到0 禁止点击
-                  // this.bool = true
-                  // let clock = setInterval(() => {
-                  //   this.total--
-                  //   this.codeDisabled = this.total + '后重新发送'
-                  //   if (this.total === 0) {
-                  //     clearInterval(clock)
-                  //     this.bool = false
-                  //     this.codeDisabled = '获取验证码'
-                  //   }
-                  // }, 1000)
+                  this.bool = true
+                  let clock = setInterval(() => {
+                    this.total--
+                    this.codeDisabled = this.total + '后重新发送'
+                    if (this.total === 0) {
+                      clearInterval(clock)
+                      this.bool = false
+                      this.codeDisabled = '获取验证码'
+                    }
+                  }, 1000)
                 })
               })
-              .onError(function () {
+              .onError(() => {
                 // your code
               })
           }
@@ -109,16 +109,16 @@ export default {
         this.$message.error('请检查手机格式是否正确')
       })
       // 这里放置定时器  计时按钮
-      this.bool = true
-      let clock = setInterval(() => {
-        this.total--
-        this.codeDisabled = this.total + '后重新发送'
-        if (this.total === 0) {
-          clearInterval(clock)
-          this.bool = false
-          this.codeDisabled = '获取验证码'
-        }
-      }, 1000)
+      // this.bool = true
+      // let clock = setInterval(() => {
+      //   this.total--
+      //   this.codeDisabled = this.total + '后重新发送'
+      //   if (this.total === 0) {
+      //     clearInterval(clock)
+      //     this.bool = false
+      //     this.codeDisabled = '获取验证码'
+      //   }
+      // }, 1000)
     },
     handleEnter () {
       // console.log(this.user.mobile,this.user.code)
