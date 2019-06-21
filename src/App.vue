@@ -1,6 +1,7 @@
 <template>
   <div id="app">
-
+    <!-- 路由文件引入 -->
+    <router-view></router-view>
   </div>
 </template>
 
