@@ -183,11 +183,16 @@ export default {
           code: this.user.code
         }
       }).then(res => {
+        window.localStorage.setItem('userInfo', JSON.stringify(res.data.data))
         // 状态码200-400来这里
         // console.log(res)
         // this.$router.push('/')
         // 如果锚点地址太长,使用下边的
         // ----------------------------这里就是登陆完成了
+        this.$message({
+          message: '登录成功',
+          type: 'success'
+        })
         this.$router.push({
           name: 'r-home'
         })
