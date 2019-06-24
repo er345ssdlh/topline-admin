@@ -28,10 +28,10 @@
   </div>
 </template>
 <script>
-// 导入axios
-import axios from 'axios'
 // 导入极验
 import '@/wendor/gt.js'
+// 登录页有一个设置本地存储账号信息的
+import { setUser } from '@/utils/auth'
 
 const CountDown = 300
 
@@ -77,13 +77,14 @@ export default {
     /**
      * 请求人机交互接口，使用极验，请求短信接口
     */
-    SendCode () {
-      // 发送验证码
-      const { mobile } = this.user
-      axios({
-        method: 'get',
-        url: `http://ttapi.research.itcast.cn/mp/v1_0/captchas/${mobile}`
-      }).then(res => {
+    async SendCode () {
+      try {
+        // 发送验证码
+        const { mobile } = this.user
+        const res = await this.$http({
+          method: 'get',
+          url: `/captchas/${mobile}`
+        })
         // 只有在手机格式正确，才会提交后端成功
         // 成功后，后端会给我们一些数据，我们不需要知道这些数据是什么
         // 直接去访问极客服务器，把后端给我们的这些数据给极客服务器即可
@@ -100,47 +101,40 @@ export default {
             new_captcha: true,
             product: 'popup'
           },
-          (captchaObj) => {
+          captchaObj => {
             // console.log(captchaObj)
             // captchaObj 验证对象
             // 这里可以调用验证实例 captchaObj 的实例方法
             captchaObj.appendTo('#captchaBox') // 页面上要添加id为captchaBox的盒子，并且要设置宽高才行
-            captchaObj
-              .onReady(() => {
-                // your code
+            captchaObj.onSuccess(async () => {
+              // 验证成功了  进来 captchaObj.getValidate() 就拿到了结果，这个结果正好是后端短信验证接
+              // 口需要的数据，我们来在这里请求这个接口吧
+              // console.log(captchaObj.getValidate())
+              const {
+                geetest_challenge: challenge,
+                geetest_validate: validate,
+                geetest_seccode: seccode
+              } = captchaObj.getValidate()
+              // console.log(challenge, '------------' + validate, '-------------' + seccode + ' -----')
+              // console.log(mobile)
+              await this.$http({
+                //  这里没有使用到res 所以就不要再const res = 了
+                method: 'GET',
+                url: `/sms/codes/${mobile}`,
+                params: {
+                  challenge,
+                  validate,
+                  seccode
+                }
               })
-              .onSuccess(() => {
-                // 验证成功了  进来 captchaObj.getValidate() 就拿到了结果，这个结果正好是后端短信验证接
-                // 口需要的数据，我们来在这里请求这个接口吧
-                // console.log(captchaObj.getValidate())
-                const {
-                  geetest_challenge: challenge,
-                  geetest_validate: validate,
-                  geetest_seccode: seccode
-                } = captchaObj.getValidate()
-                // console.log(challenge, '------------' + validate, '-------------' + seccode + ' -----')
-                // console.log(mobile)
-                axios({
-                  method: 'GET',
-                  url: `http://ttapi.research.itcast.cn/mp/v1_0/sms/codes/${mobile}`,
-                  params: {
-                    challenge,
-                    validate,
-                    seccode
-                  }
-                }).then(res => {
-                  // -----------------------成功发送短信了 这时候应该给按钮设置倒计时，倒计时未到0 禁止点击
-                  this.CodeCountDown()
-                })
-              })
-              .onError(() => {
-                // your code
-              })
+              // -----------------------成功发送短信了 这时候应该给按钮设置倒计时，倒计时未到0 禁止点击
+              this.CodeCountDown()
+            })
           }
         )
-      }).catch((rej) => {
+      } catch (rej) {
         this.$message.error('请检查手机格式是否正确')
-      })
+      }
     },
     /**
      * 倒计时
@@ -172,18 +166,21 @@ export default {
     /**
      * 登录
     */
-    RingUp () {
-      // console.log(this.user.mobile,this.user.code)
+    async RingUp () {
+      try {
+        // console.log(this.user.mobile,this.user.code)
       // 非实名认证不可以上 得去http://toutiao.research.itcast.cn/#/user 注册
-      axios({
-        method: 'POST',
-        url: 'http://ttapi.research.itcast.cn/mp/v1_0/authorizations',
-        data: {
-          mobile: this.user.mobile,
-          code: this.user.code
-        }
-      }).then(res => {
-        window.localStorage.setItem('userInfo', JSON.stringify(res.data.data))
+        const res = await this.$http({
+          method: 'POST',
+          url: '/authorizations',
+          data: {
+            mobile: this.user.mobile,
+            code: this.user.code
+          }
+        })
+        // async await 上边失败就会进去catch 不会往下执行，换句话 下边都是成功的了代码
+        // window.localStorage.setItem('userInfo', JSON.stringify(res.data.data))
+        setUser(JSON.stringify(res.data.data))
         // 状态码200-400来这里
         // console.log(res)
         // this.$router.push('/')
@@ -196,9 +193,9 @@ export default {
         this.$router.push({
           name: 'r-home'
         })
-      }).catch((rej) => {
+      } catch (rej) {
         this.$message.error('账号或者验证码不正确')
-      })
+      }
     }
   }
 }
