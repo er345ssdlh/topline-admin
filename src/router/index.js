@@ -1,9 +1,12 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import nprogress from 'nprogress'
+// 获取登录信息，按需引入
+import { getUser } from '../utils/auth'
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   routes: [
     // {
     //   name: 'home',
@@ -39,3 +42,34 @@ export default new Router({
     }
   ]
 })
+router.beforeEach((to, from, next) => {
+  nprogress.start()
+  // 路由导航前，先进性判断
+  // 本地存储的登录账号信息，可以进行一下优化
+  // const userinfo = window.localStorage.getItem('userInfo')
+  const userinfo = getUser()
+  // 非登陆页面
+  if (to.path !== '/login') {
+    // 如果没有登录信息
+    if (!userinfo) {
+      alert('请先登录')
+      next({ name: 'login' })
+    } else {
+      // 登录了
+      next()
+    }
+  } else {
+    // 登录了页面
+    if (userinfo) {
+      next({ name: 'r-home' })
+      window.location.reload()
+    } else {
+      next()
+    }
+  }
+})
+router.afterEach((to, from) => {
+// 路由导航完成
+  nprogress.done()
+})
+export default router

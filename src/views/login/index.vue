@@ -32,6 +32,8 @@
 import axios from 'axios'
 // 导入极验
 import '@/wendor/gt.js'
+// 登录页有一个设置本地存储账号信息的
+import { setUser } from '@/utils/auth'
 
 const CountDown = 300
 
@@ -183,7 +185,8 @@ export default {
           code: this.user.code
         }
       }).then(res => {
-        window.localStorage.setItem('userInfo', JSON.stringify(res.data.data))
+        // window.localStorage.setItem('userInfo', JSON.stringify(res.data.data))
+        setUser(JSON.stringify(res.data.data))
         // 状态码200-400来这里
         // console.log(res)
         // this.$router.push('/')
