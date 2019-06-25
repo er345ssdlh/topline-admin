@@ -32,6 +32,7 @@
 import '@/wendor/gt.js'
 // 登录页有一个设置本地存储账号信息的
 import { setUser } from '@/utils/auth'
+import initGeetest from '@/utils/initGeetest'
 
 const CountDown = 300
 
@@ -92,46 +93,43 @@ export default {
         // 请检测data的数据结构， 保证data.gt, data.challenge, data.success有值
         const data = res.data.data
         // eslint规定  全局 要加window
-        window.initGeetest(
-          {
-            // 以下配置参数来自服务端 SDK
-            gt: data.gt,
-            challenge: data.challenge,
-            offline: !data.success,
-            new_captcha: true,
-            product: 'popup'
-          },
-          captchaObj => {
-            // console.log(captchaObj)
-            // captchaObj 验证对象
-            // 这里可以调用验证实例 captchaObj 的实例方法
-            captchaObj.appendTo('#captchaBox') // 页面上要添加id为captchaBox的盒子，并且要设置宽高才行
-            captchaObj.onSuccess(async () => {
-              // 验证成功了  进来 captchaObj.getValidate() 就拿到了结果，这个结果正好是后端短信验证接
-              // 口需要的数据，我们来在这里请求这个接口吧
-              // console.log(captchaObj.getValidate())
-              const {
-                geetest_challenge: challenge,
-                geetest_validate: validate,
-                geetest_seccode: seccode
-              } = captchaObj.getValidate()
-              // console.log(challenge, '------------' + validate, '-------------' + seccode + ' -----')
-              // console.log(mobile)
-              await this.$http({
-                //  这里没有使用到res 所以就不要再const res = 了
-                method: 'GET',
-                url: `/sms/codes/${mobile}`,
-                params: {
-                  challenge,
-                  validate,
-                  seccode
-                }
-              })
-              // -----------------------成功发送短信了 这时候应该给按钮设置倒计时，倒计时未到0 禁止点击
-              this.CodeCountDown()
-            })
-          }
-        )
+        const captchaObj = await initGeetest({
+          // 以下配置参数来自服务端 SDK
+          gt: data.gt,
+          challenge: data.challenge,
+          offline: !data.success,
+          new_captcha: true,
+          product: 'popup'
+        })
+        // console.log(captchaObj)
+        // captchaObj 验证对象
+        // 这里可以调用验证实例 captchaObj 的实例方法
+        // 页面上要添加id为captchaBox的盒子，并且要设置宽高才行
+        captchaObj.appendTo('#captchaBox')
+        captchaObj.onSuccess(async () => {
+          // 验证成功了  进来 captchaObj.getValidate() 就拿到了结果，这个结果正好是后端短信验证接
+          // 口需要的数据，我们来在这里请求这个接口吧
+          // console.log(captchaObj.getValidate())
+          const {
+            geetest_challenge: challenge,
+            geetest_validate: validate,
+            geetest_seccode: seccode
+          } = captchaObj.getValidate()
+          // console.log(challenge, '------------' + validate, '-------------' + seccode + ' -----')
+          // console.log(mobile)
+          await this.$http({
+            //  这里没有使用到res 所以就不要再const res = 了
+            method: 'GET',
+            url: `/sms/codes/${mobile}`,
+            params: {
+              challenge,
+              validate,
+              seccode
+            }
+          })
+          // -----------------------成功发送短信了 这时候应该给按钮设置倒计时，倒计时未到0 禁止点击
+          this.CodeCountDown()
+        })
       } catch (rej) {
         this.$message.error('请检查手机格式是否正确')
       }
