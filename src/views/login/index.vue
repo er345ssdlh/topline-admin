@@ -15,7 +15,7 @@
       <!-- 验证码 -->
       <el-form-item prop="code">
         <el-input v-model="user.code" placeholder="请输入验证码" class="login-code"></el-input>
-        <el-button @click="handleCode" :disabled='bool'>{{ codeDisabled }}</el-button>
+        <el-button @click="handleCode" :disabled='bool' :loading="codeing">{{ codeDisabled }}</el-button>
       </el-form-item>
       <div id="captchaBox"></div>
       <el-form-item prop="notice">
@@ -23,7 +23,7 @@
          <el-checkbox class="agreementBox" v-model="user.notice"></el-checkbox>
          <span  class="agreementText">我已阅读并同意<a href="#">用户协议</a>和<a href="#">隐私条款</a></span>
       </el-form-item>
-      <el-button type="primary" class="login-submit" @click="handleEnter">登录</el-button>
+      <el-button type="primary" class="login-submit" @click="handleEnter" :loading="entering">登录</el-button>
     </el-form>
   </div>
 </template>
@@ -63,15 +63,20 @@ export default {
       },
       codeDisabled: '获取验证码',
       bool: false,
-      total: CountDown
+      total: CountDown,
+      entering: false,
+      codeing: false
     }
   },
   methods: {
     handleCode () {
+      this.codeing = true
       // 通过Dom找到el-from这个Dom节点再.validateFiled方法对单独进行验证 成功不返回东西，失败返回提示信息
       this.$refs['userCodeverify'].validateField('mobile', errorMessage => {
         if (!errorMessage.length) {
           this.SendCode()
+        } else {
+          this.codeing = false
         }
       })
     },
@@ -127,11 +132,13 @@ export default {
               seccode
             }
           })
+          this.codeing = false
           // -----------------------成功发送短信了 这时候应该给按钮设置倒计时，倒计时未到0 禁止点击
           this.CodeCountDown()
         })
       } catch (rej) {
         this.$message.error('请检查手机格式是否正确')
+        this.codeing = false
       }
     },
     /**
@@ -153,11 +160,15 @@ export default {
      * 点击登录按钮
     */
     handleEnter () {
+      this.entering = true
+      // 这个是对表单验证 的全部验证
       this.$refs['userCodeverify'].validate(valie => {
         // console.log(valie)
         // 如果都验证成功了，就发送登录请求
         if (valie) {
           this.RingUp()
+        } else {
+          this.entering = false
         }
       })
     },
@@ -191,8 +202,10 @@ export default {
         this.$router.push({
           name: 'r-home'
         })
+        this.entering = false
       } catch (rej) {
         this.$message.error('账号或者验证码不正确')
+        this.entering = false
       }
     }
   }

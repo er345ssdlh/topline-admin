@@ -53,6 +53,9 @@ router.beforeEach((to, from, next) => {
     // 如果没有登录信息
     if (!userinfo) {
       alert('请先登录')
+      if (from.path === '/login') {
+        nprogress.done()
+      }
       next({ name: 'login' })
     } else {
       // 登录了

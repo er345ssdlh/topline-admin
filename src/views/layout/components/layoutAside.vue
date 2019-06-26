@@ -23,11 +23,11 @@
           <span>内容管理</span>
         </template>
         <el-menu-item-group>
-          <el-menu-item index="/article">
+          <el-menu-item index="">
           <i class="iconfont toplinefabuwenzhang"></i>
           <span slot="title">发布文章</span>
           </el-menu-item>
-          <el-menu-item index="2-2">
+          <el-menu-item index="/article">
             <i class="iconfont iconfont toplineneirongliebiao"></i>
             <span slot="title">内容列表</span>
             </el-menu-item>
