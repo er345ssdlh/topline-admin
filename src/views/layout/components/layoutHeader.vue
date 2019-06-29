@@ -3,10 +3,10 @@
         <i class="iconfont toplinetoutiao1"></i>
         <span>黑马头条</span>
         <div class="dropdown">
-            <img :src='userInfo.photo' alt="">
+            <img :src='$store.state.user.photo' alt="">
             <el-dropdown trigger="click">
                 <el-button type="primary">
-                    {{ userInfo.name }}
+                    {{ $store.state.user.name }}
                     <i class="el-icon-arrow-down el-icon--right"></i>
                 </el-button>
                 <el-dropdown-menu slot="dropdown">
@@ -20,13 +20,12 @@
 </template>
 
 <script>
-import { removeUser, getUser } from '@/utils/auth'
+import { removeUser } from '@/utils/auth'
 // import { getUser } from '@/utils/auth'
 //   export default {
 export default {
   data () {
     return {
-      userInfo: {}
     }
   },
   methods: {
@@ -52,7 +51,8 @@ export default {
   },
   created () {
     // this.userInfo = JSON.parse(window.localStorage.getItem('userInfo'))
-    this.userInfo = JSON.parse(getUser())
+    // this.userInfo = JSON.parse(getUser())
+    // console.log($store.state.user)
   }
 }
 

@@ -4,7 +4,6 @@
             <img src="../../../assets/logo_admin.png" alt="">
         </div>
     <el-menu
-      default-active="2"
       class="el-menu-vertical-demo"
       background-color="#545c64"
       text-color="#fff"
@@ -23,7 +22,7 @@
           <span>内容管理</span>
         </template>
         <el-menu-item-group>
-          <el-menu-item index="">
+          <el-menu-item index="/publish">
           <i class="iconfont toplinefabuwenzhang"></i>
           <span slot="title">发布文章</span>
           </el-menu-item>
@@ -31,11 +30,11 @@
             <i class="iconfont iconfont toplineneirongliebiao"></i>
             <span slot="title">内容列表</span>
             </el-menu-item>
-          <el-menu-item index="2-3">
+          <el-menu-item index="/comment">
             <i class="iconfont toplinepinglun-liebiao"></i>
             <span slot="title">评论列表</span>
             </el-menu-item>
-          <el-menu-item index="2-3">
+          <el-menu-item index="media">
             <i class="iconfont toplinesucaiguanli"></i>
             <span slot="title">素材管理</span>
             </el-menu-item>
@@ -67,7 +66,7 @@
         </el-menu-item-group>
       </el-submenu>
       <!--  -->
-      <el-menu-item index="4">
+      <el-menu-item index="/account">
         <i class="iconfont toplinezhanghuxinxi"></i>
         <span slot="title">账户信息</span>
       </el-menu-item>
@@ -92,5 +91,8 @@ export default {}
 i{
   margin:0 20px 0 10px;
   font-size: 18px;
+}
+.el-menu-vertical-demo{
+  width: 100%;
 }
 </style>

@@ -32,6 +32,31 @@ const router = new Router({
           name: 'r-article',
           path: '/article',
           component: () => import('@/views/article/')
+        },
+        {
+          name: 'r-publish',
+          path: '/publish',
+          component: () => import('@/views/publish/')
+        },
+        {
+          name: 'r-publish-edit',
+          path: '/publish/:id',
+          component: () => import('@/views/publish/')
+        },
+        {
+          name: 'r-comment',
+          path: '/comment',
+          component: () => import('@/views/comment/')
+        },
+        {
+          name: 'r-account',
+          path: '/account',
+          component: () => import('@/views/account/')
+        },
+        {
+          name: 'r-media',
+          path: '/media',
+          component: () => import('@/views/media/')
         }
       ]
     },

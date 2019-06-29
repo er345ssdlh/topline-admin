@@ -13,11 +13,37 @@ import 'nprogress/nprogress.css'
 import '@/styles/index.css'
 // 本地存储
 import { getUser, removeUser } from '@/utils/auth'
+import JSONbig from 'json-bigint'
+// vuex
+import store from '@/store/'
 // 优化：配置基础路径
-axios.defaults.baseURL = 'http://toutiao.course.itcast.cn/mp/v1_0'
+axios.defaults.baseURL = 'http://ttapi.research.itcast.cn/mp/v1_0'
+// 用外网
+// 'http://ttapi.research.itcast.cn/mp/v1_0'
+// 配置好的局域网用
+// toutiao.course.itcast.cn/mp/v1_0
+// axios频繁使用  我们可以给Vue实例设置一个共有属性就可以，这个属性值要加上$ 防止与
+// 实例对象的数据发生冲突
 // 添加请求拦截器
+// 解决后台收据过大，超过，js的安全数字
+axios.defaults.transformResponse = [function (data) {
+  // console.log('transformResponse => ', data)
+  // return data
+
+  // 这里使用 JSONbig.parse 转换原始数据
+  // 类似于 JSON.parse
+  // 但是它会处理其中超出安全整数范围的整数问题。
+  // 严谨一点，如果 data 不是 json 格式字符串就会报错
+  try {
+    // 如果是 json 格式字符串，那就转换并返回给后续使用
+    return JSONbig.parse(data)
+  } catch (err) {
+    // 报错就意味着 data 不是 json 格式字符串，这里就直接原样返回给后续使用
+    return data
+  }
+}]
 axios.interceptors.request.use(config => {
-  const user = JSON.parse(getUser())
+  const user = getUser()
   if (user) {
     // 如果能获取到user的本地存储
     config.headers.Authorization = `Bearer ${user.token}`
@@ -42,12 +68,6 @@ axios.interceptors.response.use(response => {
   }
   return Promise.reject(error)
 })
-// 用外网
-// 'http://ttapi.research.itcast.cn/mp/v1_0'
-// 配置好的局域网用
-// toutiao.course.itcast.cn/mp/v1_0
-// axios频繁使用  我们可以给Vue实例设置一个共有属性就可以，这个属性值要加上$ 防止与
-// 实例对象的数据发生冲突
 Vue.prototype.$http = axios
 Vue.use(ElementUI)
 
@@ -55,5 +75,6 @@ Vue.config.productionTip = false
 
 new Vue({
   router,
+  store,
   render: h => h(App)
 }).$mount('#app')

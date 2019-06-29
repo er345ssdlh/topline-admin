@@ -189,7 +189,7 @@ export default {
         })
         // async await 上边失败就会进去catch 不会往下执行，换句话 下边都是成功的了代码
         // window.localStorage.setItem('userInfo', JSON.stringify(res.data.data))
-        setUser(JSON.stringify(res.data.data))
+        setUser(res.data.data)
         // 状态码200-400来这里
         // console.log(res)
         // this.$router.push('/')
