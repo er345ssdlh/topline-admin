@@ -57,6 +57,28 @@ const router = new Router({
           name: 'r-media',
           path: '/media',
           component: () => import('@/views/media/')
+        },
+        {
+          name: 'r-material',
+          path: '/material',
+          component: () => import('@/views/material/')
+        },
+        {
+          name: 'r-fans',
+          path: '/fans',
+          component: () => import('@/views/fans/'),
+          children: [
+            {
+              name: 'r-fans-info',
+              path: '/fans/info',
+              component: () => import('@/views/fans/components/info')
+            },
+            {
+              name: 'r-fans-list',
+              path: '/fans/list',
+              component: () => import('@/views/fans/components/list')
+            }
+          ]
         }
       ]
     },

@@ -34,7 +34,7 @@
             <i class="iconfont toplinepinglun-liebiao"></i>
             <span slot="title">评论列表</span>
             </el-menu-item>
-          <el-menu-item index="media">
+          <el-menu-item index="/media">
             <i class="iconfont toplinesucaiguanli"></i>
             <span slot="title">素材管理</span>
             </el-menu-item>
@@ -47,19 +47,19 @@
           <span>粉丝管理</span>
         </template>
         <el-menu-item-group>
-          <el-menu-item index="3-1">
+          <el-menu-item index="/material">
             <i class="iconfont toplineshuju2"></i>
             <span slot="title">图文数据</span>
             </el-menu-item>
-          <el-menu-item index="3-2">
+          <el-menu-item index="/fans">
             <i class="iconfont toplinefensi"></i>
             <span slot="title">粉丝概况</span>
             </el-menu-item>
-          <el-menu-item index="3-3">
+          <el-menu-item index="/fans/info">
             <i class="iconfont toplinefensihuaxiang"></i>
             <span slot="title">粉丝画像</span>
             </el-menu-item>
-          <el-menu-item index="3-3">
+          <el-menu-item index="/fans/list">
             <i class="iconfont toplinefensiliebiao"></i>
             <span slot="title">粉丝列表</span>
             </el-menu-item>
